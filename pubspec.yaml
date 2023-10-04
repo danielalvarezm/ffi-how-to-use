@@ -1,4 +1,4 @@
-name: ffi-example
+name: ffi_example
 description: A sample ffi application
 version: 1.0.0
 
@@ -14,3 +14,11 @@ dev_dependencies:
 dependencies:
   ffi: ^2.0.2
   ffigen: ^7.2.11
+
+ffigen:
+  output: 'lib/generated_bindings.dart'
+  headers:
+    entry-points:
+      - 'native_code/multiply/multiply.h'
+    include-directives:
+      - 'native_code/multiply/multiply.h'

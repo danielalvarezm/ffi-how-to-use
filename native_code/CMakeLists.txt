@@ -14,4 +14,4 @@ add_subdirectory(multiply)
 add_executable(app main.c)
 
 # Links the executable with the shared library
-target_link_libraries(app sharedLib)
+target_link_libraries(app multiplyLib)

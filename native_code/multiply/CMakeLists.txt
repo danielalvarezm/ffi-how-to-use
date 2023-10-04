@@ -4,7 +4,7 @@
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 # Compile multiply.c into a shared library
-add_library(sharedLib SHARED multiply.c)
+add_library(multiplyLib SHARED multiply.c)
 
 # Add current directory to the include search scope
-target_include_directories(sharedLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(multiplyLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

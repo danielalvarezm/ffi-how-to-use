@@ -1,0 +1,21 @@
+version: '3'
+silent: true
+tasks:
+  build:
+    desc: "🏗️ Generate C shared library and executable"
+    cmds:
+      - cd native_code/build && cmake .. && cmake --build . && make
+
+  ffigen:
+    desc: "⚙️ Generate dart code with ffigen from C lang"
+    cmds:
+      - flutter pub run ffigen
+
+  generate:
+    desc: "️⛓️ Generate dependencies and bindings"
+    cmds:
+      - task build
+      - task ffigen
+  default:
+    cmds:
+      - task -l --sort none

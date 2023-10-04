@@ -1,3 +1,4 @@
 .dart_tool/
 .idea/
 /native_code/build
+./lib/generated_bindings.dart
