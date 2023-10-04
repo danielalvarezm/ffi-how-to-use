@@ -14,6 +14,7 @@ dev_dependencies:
 dependencies:
   ffi: ^2.0.2
   ffigen: ^7.2.11
+  logger: ^2.0.2+1
 
 ffigen:
   output: 'lib/generated_bindings.dart'

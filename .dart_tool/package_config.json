@@ -122,6 +122,12 @@
       "languageVersion": "2.17"
     },
     {
+      "name": "logger",
+      "rootUri": "file:///home/daniel/.pub-cache/hosted/pub.dev/logger-2.0.2+1",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
       "name": "logging",
       "rootUri": "file:///home/daniel/.pub-cache/hosted/pub.dev/logging-1.2.0",
       "packageUri": "lib/",
@@ -308,13 +314,13 @@
       "languageVersion": "2.19"
     },
     {
-      "name": "cli",
+      "name": "ffi_example",
       "rootUri": "../",
       "packageUri": "lib/",
       "languageVersion": "2.19"
     }
   ],
-  "generated": "2023-10-04T16:32:39.054551Z",
+  "generated": "2023-10-13T09:55:07.102858Z",
   "generator": "pub",
   "generatorVersion": "2.19.6"
 }
