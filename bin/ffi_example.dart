@@ -1,7 +1,8 @@
 import 'dart:ffi';
 import 'package:ffi_example/generated_bindings.dart';
 
-final path = "../native_code/build/libmultiplyLib.so";
+// This path is relative to the root of the project, and may need to be changed depending on where you run the example from.
+final path = "native_code/build/libmultiplyLib.so";
 final DynamicLibrary _dylib = DynamicLibrary.open(path);
 
 final NativeLibrary _bindings = NativeLibrary(_dylib);
