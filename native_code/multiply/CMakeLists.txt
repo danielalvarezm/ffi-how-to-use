@@ -1,5 +1,3 @@
-# CMakeLists.txt en la carpeta 'multiply'
-
 # Set the output folder where your program will be created
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
