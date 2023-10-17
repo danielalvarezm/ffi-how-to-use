@@ -1,4 +1,21 @@
+# See https://www.dartlang.org/guides/libraries/private-files
+
+# Files and directories created by pub
 .dart_tool/
+.packages
+build/
+
+# dartdoc
+doc/api/
+
+# IntelliJ
+*.iml
+*.ipr
+*.iws
 .idea/
+
+# Mac
+.DS_Store
+
 /native_code/build
 ./lib/generated_bindings.dart
