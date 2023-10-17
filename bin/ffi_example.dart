@@ -5,7 +5,6 @@ import 'package:ffi_example/generated_bindings.dart';
 final path = "native_code/build/libmultiplyLib.so";
 final DynamicLibrary _dylib = DynamicLibrary.open(path);
 
-
 void main() {
   multiplyUsingFFIGen();
   multiplyUsingFFI();
@@ -32,5 +31,3 @@ void multiplyUsingFFI() {
   final result = multiplyFFI(firstDigit, secondDigit);
   print("Using FFI -> $firstDigit * $secondDigit = $result");
 }
-
-
