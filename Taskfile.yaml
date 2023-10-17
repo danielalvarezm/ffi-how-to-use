@@ -4,6 +4,7 @@ tasks:
   build:
     desc: "🏗️ Generate C shared library and executable"
     cmds:
+      - test -d native_code/build || mkdir -p native_code/build
       - cd native_code/build && cmake .. && cmake --build . && make
 
   ffigen:
