@@ -2,7 +2,7 @@ version: '3'
 silent: true
 tasks:
   build:
-    desc: "🏗️ Generate C shared library and executable"
+    desc: "🏗️ Generate C shared library, dependencies and executable"
     cmds:
       - test -d native_code/build || mkdir -p native_code/build
       - cd native_code/build && cmake .. && cmake --build . && make
@@ -15,8 +15,21 @@ tasks:
   generate:
     desc: "️⛓️ Generate dependencies and bindings"
     cmds:
+      - dart pub get
       - task build
       - task ffigen
+
+  run:
+    desc: "🚀 Run Dart app without generate dependencies and bindings"
+    cmds:
+      - dart run bin/ffi_example.dart
+
+  execute:
+    desc: "🚀 Run Dart app"
+    cmds:
+      - task generate
+      - task run
+
   default:
     cmds:
       - task -l --sort none
