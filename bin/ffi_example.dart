@@ -1,13 +1,14 @@
-import 'dart:io';
 import 'dart:ffi';
-import 'package:ffi/ffi.dart';
-import 'package:path/path.dart';
+import 'package:ffi_example/generated_bindings.dart';
 
-final path = absolute('/home/daniel/Escritorio/Leanmind/Formacion/Articulos/ffi_example/native_code/build/libmultiplyLib.so');
+final path = "../native_code/build/libmultiplyLib.so";
+final DynamicLibrary _dylib = DynamicLibrary.open(path);
 
-// Dynamic library object
-final DynamicLibrary _nativeAddLib = DynamicLibrary.open(path);
+final NativeLibrary _bindings = NativeLibrary(_dylib);
 
-
-final multiply = _nativeAddLib.lookupFunction('multiply');
-final result = multiply(2, 3);
+void main() {
+  var firstDigit = 10;
+  var secondDigit = 2;
+  final result = _bindings.multiply(firstDigit, secondDigit);
+  print("$firstDigit * $secondDigit = $result");
+}
