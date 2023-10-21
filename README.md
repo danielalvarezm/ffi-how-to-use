@@ -1,4 +1,4 @@
-# FFI/FFIGEN EXAMPLE 
+# FFI/FFIGEN HOW TO USE EXAMPLE
 
 This repository is an example of how to integrate a C project into your Dart/Flutter project using [ffi](https://pub.dev/packages/ffi) and [ffigen](https://pub.dev/packages/ffigen) Dart packages.
 
