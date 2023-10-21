@@ -10,7 +10,7 @@ In this case, a C project has been created with a library containing a function 
 
 <a name="getting-started"></a>
 ## Getting started
-* Install [taskfile](https://taskfile.dev/installation/) to automate processes. If you don't want to use it, you can run the commands in the `Taskfile.yml` file manually.
+* Install [taskfile](https://taskfile.dev/installation/) to automate processes. If you don't want to use it, you can run the commands in the [Taskfile.yaml](https://github.com/danielalvarezm/ffi-how-to-use/blob/main/Taskfile.yaml) file manually.
 * Install [ffigen](https://pub.dev/packages/ffigen#installing-llvm) dependencies.
 * Install project dependencies with `dart pub get`.
 * You should have everything you need to compile and run a C project. If not, install the necessary dependencies (Cmake, gcc, etc).
