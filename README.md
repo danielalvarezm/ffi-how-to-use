@@ -18,7 +18,7 @@ In this case, a C project has been created with a library containing a function 
     *  `dart pub get`: Install dart dependencies
     * `task build`: Generate C shared library, dependencies and executable 
     * `task ffigen`: Generate dart code with ffigen from C lang
-* Run `task run` or `task execute` (generate + run) to run the example.
+* Run `task execute` or `task run` (generate + execute) to run the example.
 
 >💡 All task commands have to be run from the root folder of the project.
 

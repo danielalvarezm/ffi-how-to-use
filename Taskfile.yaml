@@ -19,16 +19,16 @@ tasks:
       - task build
       - task ffigen
 
-  run:
+  execute:
     desc: "🚀 Run Dart app without generate dependencies and bindings"
     cmds:
       - dart run bin/ffi_example.dart
 
-  execute:
-    desc: "🚀 Run Dart app"
+  run:
+    desc: "🚀 Build dependencies and run Dart app"
     cmds:
       - task generate
-      - task run
+      - task execute
 
   default:
     cmds:

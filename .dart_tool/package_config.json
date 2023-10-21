@@ -141,7 +141,7 @@
     },
     {
       "name": "meta",
-      "rootUri": "file:///home/daniel/.pub-cache/hosted/pub.dev/meta-1.10.0",
+      "rootUri": "file:///home/daniel/.pub-cache/hosted/pub.dev/meta-1.11.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -320,7 +320,7 @@
       "languageVersion": "2.19"
     }
   ],
-  "generated": "2023-10-13T09:55:07.102858Z",
+  "generated": "2023-10-21T17:53:40.685356Z",
   "generator": "pub",
   "generatorVersion": "2.19.6"
 }

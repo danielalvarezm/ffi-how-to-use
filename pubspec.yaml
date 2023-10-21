@@ -20,6 +20,6 @@ ffigen:
   output: 'lib/generated_bindings.dart'
   headers:
     entry-points:
-      - 'native_code/multiply/multiply.h'
+      - 'native_code/math_operations/math_operations.h'
     include-directives:
-      - 'native_code/multiply/multiply.h'
+      - 'native_code/math_operations/math_operations.h'

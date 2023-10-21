@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "multiply/multiply.h"
+#include "math_operations/math_operations.h"
 
 int main(int argc, char *argv[]) {
     if (argc != 3) {
