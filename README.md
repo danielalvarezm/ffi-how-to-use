@@ -4,6 +4,8 @@ This repository is an example of how to integrate a C project into your Dart/Flu
 
 In this case, a C project has been created with a library containing a function that multiplies two numbers. This library is used in a Dart project (it would also work for Flutter) to display the result of the multiplication in the console.
 
+A detailed guide can be found [here](https://leanmind.es/es/blog/explorando-la-integracion-de-librerias-nativas-en-flutter-mediante-ffi/)
+
 ## Index
 * [Getting started](#getting-started)
 * [Project structure](#project-structure)
