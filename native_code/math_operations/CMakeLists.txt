@@ -1,8 +1,7 @@
-# Set the output folder where your program will be created
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-
-# Compile math_operations.c into a shared library
 add_library(mathOperationsLib SHARED math_operations.c)
+target_compile_features(mathOperationsLib PUBLIC c_std_99)
+set_target_properties(mathOperationsLib PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}"
+)
 
-# Add current directory to the include search scope
 target_include_directories(mathOperationsLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

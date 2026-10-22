@@ -1,35 +1,50 @@
 version: '3'
-silent: true
+
+# Resolve paths from the Taskfile, even when Task is invoked from a subdirectory.
+dir: '{{.ROOT_DIR}}'
+
 tasks:
   build:
-    desc: "🏗️ Generate C shared library, dependencies and executable"
+    desc: Build the C shared library and smoke example
     cmds:
-      - test -d native_code/build || mkdir -p native_code/build
-      - cd native_code/build && cmake .. && cmake --build . && make
+      - cmake -S native_code -B native_code/build
+      - cmake --build native_code/build
 
   ffigen:
-    desc: "⚙️ Generate dart code with ffigen from C lang"
+    desc: Regenerate Dart bindings (requires dart pub get and libclang)
     cmds:
-      - flutter pub run ffigen
+      - dart run tool/ffigen.dart
 
   generate:
-    desc: "️⛓️ Generate dependencies and bindings"
+    desc: Install locked dependencies, generate bindings and build C (in order)
     cmds:
-      - dart pub get
-      - task build
-      - task ffigen
+      - dart pub get --enforce-lockfile
+      - task: ffigen
+      - task: build
 
   execute:
-    desc: "🚀 Run Dart app without generate dependencies and bindings"
+    desc: Run the prepared Dart example
     cmds:
       - dart run bin/ffi_example.dart
 
   run:
-    desc: "🚀 Build dependencies and run Dart app"
+    desc: Prepare and run the Dart example
     cmds:
-      - task generate
-      - task execute
+      - task: generate
+      - task: execute
+
+  test:
+    desc: Prepare and test both bindings
+    cmds:
+      - task: generate
+      - dart test
+
+  check:
+    desc: Check Dart formatting and static analysis
+    cmds:
+      - dart format --output=none --set-exit-if-changed bin lib test tool
+      - dart analyze --fatal-infos
 
   default:
     cmds:
-      - task -l --sort none
+      - task --list
