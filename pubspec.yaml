@@ -1,25 +1,12 @@
 name: ffi_example
-description: A sample ffi application
+description: A small console example comparing manual Dart FFI and generated C bindings.
 version: 1.0.0
+publish_to: none
 
 environment:
-  sdk: '>=2.19.6 <3.0.0'
-
-# dependencies:
-#   path: ^1.8.0
+  sdk: ^3.13.6
 
 dev_dependencies:
-  lints: ^2.0.0
-  test: ^1.21.0
-dependencies:
-  ffi: ^2.0.2
-  ffigen: ^7.2.11
-  logger: ^2.0.2+1
-
-ffigen:
-  output: 'lib/generated_bindings.dart'
-  headers:
-    entry-points:
-      - 'native_code/math_operations/math_operations.h'
-    include-directives:
-      - 'native_code/math_operations/math_operations.h'
+  ffigen: ^23.0.0
+  lints: ^6.1.0
+  test: ^1.33.0

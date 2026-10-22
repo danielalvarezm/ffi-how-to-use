@@ -1,19 +1,13 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
+#include "math_operations.h"
 
-#include "math_operations/math_operations.h"
-
-int main(int argc, char *argv[]) {
-    if (argc != 3) {
-        printf("Usage: %s <number> <number>\n", argv[0]);
-        return -1;
-    }
-
-    int a = atoi(argv[1]);
-    int b = atoi(argv[2]);
+int main(void) {
+    /* Fixed small inputs keep this C smoke example free of parsing/overflow. */
+    const int a = 10;
+    const int b = 2;
 
     printf("%d * %d = %d\n", a, b, multiply(a, b));
+    printf("%d + %d = %d\n", a, b, add(a, b));
 
     return 0;
 }

@@ -1,17 +1,8 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.16)
 
-project(FfiExample)
+project(FfiExample LANGUAGES C)
 
-# Configures the output folder for the generated files
-set(CMAKE_BINARY_DIR "${CMAKE_SOURCE_DIR}/build")
-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
-set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR})
-
-# Adds the 'math_operations' subfolder to the project
 add_subdirectory(math_operations)
 
-# Compiles the main.c file into an executable
 add_executable(app main.c)
-
-# Links the executable with the shared library
-target_link_libraries(app mathOperationsLib)
+target_link_libraries(app PRIVATE mathOperationsLib)
