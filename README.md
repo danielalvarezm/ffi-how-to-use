@@ -1,5 +1,7 @@
 # Dart FFI and FFIGen: a small C example
 
+[English](#dart-ffi-and-ffigen-a-small-c-example) | [Español](#español)
+
 A Dart **console application** calling two C functions, `multiply` and `add`,
 through the same shared library:
 
@@ -238,3 +240,125 @@ another filename extension is not verified platform support.
 - [package:ffi utilities](https://pub.dev/packages/ffi)
 - [FFIGen documentation](https://pub.dev/packages/ffigen)
 - [CMake command-line build workflow](https://cmake.org/cmake/help/latest/manual/cmake.1.html)
+
+## Español
+
+### Qué demuestra este proyecto
+
+Una aplicación de **consola Dart** llama a dos funciones C, `multiply` y `add`,
+usando la misma biblioteca compartida de dos maneras:
+
+- **FFI manual:** firmas nativas y resolución de símbolos escritas a mano con
+  `dart:ffi`, que forma parte del SDK.
+- **FFIGen:** bindings generados desde el header C mediante un script Dart.
+  El generador no compila ni distribuye la biblioteca C.
+
+No es una aplicación Flutter con interfaz gráfica. Los conceptos pueden
+reutilizarse en Flutter nativo, pero su empaquetado queda fuera del ejemplo;
+Flutter Web no está soportado. Las utilidades externas de `package:ffi` no son
+necesarias para estas operaciones con enteros.
+
+El proyecto acompañaba al
+[artículo original de 2023 en Lean Mind](https://leanmind.es/es/blog/explorando-la-integracion-de-librerias-nativas-en-flutter-mediante-ffi/).
+Esta modernización actualiza SDK, generación, carga, automatización y pruebas
+sin cambiar las dos operaciones. Los snippets antiguos del artículo no son las
+instrucciones del código actual.
+
+### Requisitos y alcance
+
+Se ha verificado **Linux x64**, tanto en Ubuntu 24.04 bajo WSL2 como en la CI de
+Linux. Esto no implica compatibilidad nativa con Windows. macOS, Android e iOS
+tampoco están implementados ni comprobados.
+
+- [Dart 3.13.6 estable](https://dart.dev/get-dart/archive), disponible en el PATH.
+  No necesitas instalar Flutter.
+- CMake 3.16 o posterior y compilador C. Se probaron CMake 3.28.3 y GCC 13.3.0.
+- LLVM/libclang 18 o posterior para regenerar bindings; se probó 18.1.3.
+- [Task v3](https://taskfile.dev/docs/installation), opcional; se probó 3.54.0.
+
+FFIGen 23.0.0, test 1.33.0 y lints 6.1.0 son herramientas de desarrollo.
+`pubspec.lock` conserva las versiones exactas y los bindings generados también
+están versionados. No hay dependencias directas de paquetes en ejecución;
+`ffi` sólo permanece transitivamente entre las herramientas.
+
+### Preparación y ejecución
+
+En Ubuntu 24.04, instala las herramientas nativas:
+
+```sh
+sudo apt-get update
+sudo apt-get install -y --no-install-recommends build-essential cmake libclang-18-dev
+```
+
+Después de instalar Dart, ejecuta desde la raíz del repositorio:
+
+```sh
+dart pub get --enforce-lockfile
+dart run tool/ffigen.dart
+cmake -S native_code -B native_code/build
+cmake --build native_code/build
+dart run bin/ffi_example.dart
+```
+
+Salida esperada de la aplicación, aparte de posibles mensajes de las herramientas:
+
+```text
+Multiply with ffigen: 20
+Add with ffigen: 12
+Multiply with ffi: 20
+Add with ffi: 12
+```
+
+El ejemplo exclusivo de C se ejecuta con `./native_code/build/app` e imprime
+`10 * 2 = 20` y `10 + 2 = 12`. Usa valores fijos, no argumentos de consola.
+
+Si tienes Task, puedes utilizar el mismo flujo mediante estos atajos:
+
+```sh
+task run       # dependencias -> bindings -> compilación C -> ejemplo Dart
+task test      # preparación y tests
+task check     # formato y análisis, con las dependencias ya instaladas
+```
+
+### Pruebas y funcionamiento
+
+Después de preparar el proyecto:
+
+```sh
+dart format --output=none --set-exit-if-changed bin lib test tool
+dart analyze --fatal-infos
+dart test
+```
+
+Hay 34 tests que cubren positivos, negativos, cero, consistencia entre enfoques,
+bibliotecas ausentes o inválidas, símbolos ausentes y ejecución desde otro
+directorio. El [registro de validación](docs/VALIDATION.md) detalla las
+comprobaciones ejecutadas; consulta los checks del PR para el estado actual de CI.
+
+El código manual está en `lib/manual_bindings.dart`; la configuración del
+generador, en `tool/ffigen.dart`; y su salida, en `lib/generated_bindings.dart`.
+Ambos enfoques usan `Int` para representar el `int` de C y comparten el cargador
+explícito de `lib/native_library.dart`. No edites a mano el archivo generado:
+regenera los bindings al cambiar el header o la configuración; la CI detecta
+diferencias respecto al archivo versionado.
+
+### Problemas frecuentes y límites
+
+- **No se encuentra la biblioteca:** ejecuta ambos comandos de CMake. La salida
+  predeterminada es `native_code/build/libmathOperationsLib.so`; instalar
+  dependencias Dart no compila C.
+- **No se encuentra libclang:** instala `libclang-18-dev` y comprueba
+  `ldconfig -p | grep libclang`. Mantén `/sbin` o `/usr/sbin` en el PATH.
+- **Falta un símbolo o la arquitectura no coincide:** recompila la biblioteca
+  para la arquitectura de la VM Dart e inspecciona los símbolos con
+  `nm -D native_code/build/libmathOperationsLib.so`.
+- **Rutas:** los comandos de preparación asumen la raíz del repositorio.
+  El cargador resuelve la biblioteca respecto al paquete fuente, no al directorio
+  de ejecución. No se cubre distribución AOT ni de ejecutables reubicables.
+- **Números:** operandos y resultados deben caber en un `int` de C. El overflow
+  con signo es comportamiento indefinido; no se admiten enteros arbitrarios.
+
+La [estructura del repositorio](#repository-structure) y los detalles técnicos
+completos están en la sección inglesa. Las
+[notas para revisar el artículo](docs/ARTICLE_REVISION_NOTES.md) están en español;
+no modifican ni publican el artículo original.
