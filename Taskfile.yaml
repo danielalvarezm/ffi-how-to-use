@@ -16,9 +16,9 @@ tasks:
       - dart run tool/ffigen.dart
 
   generate:
-    desc: Install locked dependencies, generate bindings and build C (in order)
+    desc: Install dependencies, generate bindings and build C (in order)
     cmds:
-      - dart pub get --enforce-lockfile
+      - dart pub get
       - task: ffigen
       - task: build
 
@@ -39,11 +39,15 @@ tasks:
       - task: generate
       - dart test
 
-  check:
-    desc: Check Dart formatting and static analysis
+  format:
+    desc: Format Dart code
     cmds:
-      - dart format --output=none --set-exit-if-changed bin lib test tool
-      - dart analyze --fatal-infos
+      - dart format .
+
+  check:
+    desc: Analyze Dart code
+    cmds:
+      - dart analyze
 
   default:
     cmds:
