@@ -10,6 +10,7 @@ Future<void> main() async {
   print(
     'Summary (Dart memory): ${_formatSummary(measurements.summarizeInto(batch))}',
   );
+  print('Summary (C memory): ${_formatSummary(measurements.summarize(batch))}');
 }
 
 String _formatSummary(MeasurementSummary summary) =>

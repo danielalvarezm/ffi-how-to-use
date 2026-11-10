@@ -1,3 +1,7 @@
+import 'dart:ffi';
+
+import 'package:ffi/ffi.dart';
+import 'package:ffi_measurements/generated_bindings.dart';
 import 'package:ffi_measurements/measurements.dart';
 import 'package:test/test.dart';
 
@@ -33,6 +37,35 @@ void main() {
   test('reports an empty batch explicitly', () {
     expect(
       () => measurements.summarizeInto(const []),
+      throwsA(
+        isA<ArgumentError>().having(
+          (error) => error.message,
+          'message',
+          'A measurement batch cannot be empty.',
+        ),
+      ),
+    );
+  });
+
+  test('returns an equivalent summary from C-owned memory', () {
+    const batch = [
+      Measurement('Outdoor temperature', 20.0),
+      Measurement('Café temperature', 24.0),
+    ];
+    expect(measurements.summarize(batch), measurements.summarizeInto(batch));
+  });
+
+  test('returns a null pointer and the empty-batch status', () {
+    final native = MeasurementBindings(
+      DynamicLibrary.open('native_code/build/libmeasurements.so'),
+    );
+    using((arena) {
+      final status = arena<Int>();
+      expect(native.summarize(nullptr, 0, status), nullptr);
+      expect(status.value, SUMMARY_EMPTY);
+    });
+    expect(
+      () => measurements.summarize(const []),
       throwsA(
         isA<ArgumentError>().having(
           (error) => error.message,

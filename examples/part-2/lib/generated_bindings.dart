@@ -35,6 +35,33 @@ class MeasurementBindings {
         ffi.Pointer<ffi.Char> Function(ffi.Pointer<NativeMeasurement>)
       >();
 
+  ffi.Pointer<NativeSummary> summarize(
+    ffi.Pointer<NativeMeasurement> batch,
+    int count,
+    ffi.Pointer<ffi.Int> status,
+  ) {
+    return _summarize(batch, count, status);
+  }
+
+  late final _summarizePtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<NativeSummary> Function(
+            ffi.Pointer<NativeMeasurement>,
+            ffi.Size,
+            ffi.Pointer<ffi.Int>,
+          )
+        >
+      >('summarize');
+  late final _summarize = _summarizePtr
+      .asFunction<
+        ffi.Pointer<NativeSummary> Function(
+          ffi.Pointer<NativeMeasurement>,
+          int,
+          ffi.Pointer<ffi.Int>,
+        )
+      >();
+
   int summarize_into(
     ffi.Pointer<NativeMeasurement> batch,
     int count,
@@ -61,6 +88,17 @@ class MeasurementBindings {
           ffi.Pointer<NativeSummary>,
         )
       >();
+
+  void summary_free(ffi.Pointer<NativeSummary> summary) {
+    return _summary_free(summary);
+  }
+
+  late final _summary_freePtr =
+      _lookup<
+        ffi.NativeFunction<ffi.Void Function(ffi.Pointer<NativeSummary>)>
+      >('summary_free');
+  late final _summary_free = _summary_freePtr
+      .asFunction<void Function(ffi.Pointer<NativeSummary>)>();
 }
 
 final class NativeMeasurement extends ffi.Struct {
@@ -103,6 +141,8 @@ final class NativeSummary extends ffi.Struct {
     ..ref.maximum = maximum
     ..ref.mean = mean;
 }
+
+const int SUMMARY_ALLOCATION_FAILED = 3;
 
 const int SUMMARY_EMPTY = 1;
 

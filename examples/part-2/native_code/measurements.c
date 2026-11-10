@@ -1,6 +1,7 @@
 #include "measurements.h"
 
 #include <math.h>
+#include <stdlib.h>
 
 const char *measurement_label(const measurement_t *measurement) {
   return measurement->label;
@@ -37,3 +38,24 @@ int summarize_into(const measurement_t *batch, size_t count, summary_t *out) {
                      .mean = sum / (double)count};
   return SUMMARY_OK;
 }
+
+summary_t *summarize(const measurement_t *batch, size_t count, int *status) {
+  if (status == NULL) {
+    return NULL;
+  }
+  summary_t result;
+  *status = summarize_into(batch, count, &result);
+  if (*status != SUMMARY_OK) {
+    return NULL;
+  }
+
+  summary_t *owned = malloc(sizeof *owned);
+  if (owned == NULL) {
+    *status = SUMMARY_ALLOCATION_FAILED;
+    return NULL;
+  }
+  *owned = result;
+  return owned;
+}
+
+void summary_free(summary_t *summary) { free(summary); }

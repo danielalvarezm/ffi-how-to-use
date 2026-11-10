@@ -5,12 +5,22 @@ import 'package:ffigen/ffigen.dart';
 Future<void> main() async {
   final root = Platform.script.resolve('../');
   final header = root.resolve('native_code/measurements.h');
-  const functions = {'measurement_label', 'summarize_into'};
+  const functions = {
+    'measurement_label',
+    'summarize_into',
+    'summarize',
+    'summary_free',
+  };
   const structs = {
     'measurement': 'NativeMeasurement',
     'summary': 'NativeSummary',
   };
-  const statuses = {'SUMMARY_OK', 'SUMMARY_EMPTY', 'SUMMARY_INVALID'};
+  const statuses = {
+    'SUMMARY_OK',
+    'SUMMARY_EMPTY',
+    'SUMMARY_INVALID',
+    'SUMMARY_ALLOCATION_FAILED',
+  };
 
   await FfiGenerator(
     input: Input(entryPoints: [header], include: (uri) => uri == header),

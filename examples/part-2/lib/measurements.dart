@@ -64,6 +64,24 @@ final class Measurements {
       return _copySummary(output);
     });
   }
+
+  MeasurementSummary summarize(List<Measurement> batch) {
+    return _withNativeBatch(batch, (native, count, arena) {
+      final status = arena<Int>();
+      final output = _bindings.summarize(native, count, status);
+      try {
+        _checkStatus(status.value);
+        if (output == nullptr) {
+          throw StateError('C reported success without a summary.');
+        }
+        return _copySummary(output);
+      } finally {
+        if (output != nullptr) {
+          _bindings.summary_free(output);
+        }
+      }
+    });
+  }
 }
 
 T _withNativeBatch<T>(
@@ -100,6 +118,8 @@ void _checkStatus(int status) {
       throw ArgumentError('A measurement batch cannot be empty.');
     case SUMMARY_INVALID:
       throw ArgumentError('Measurements and their sum must be finite.');
+    case SUMMARY_ALLOCATION_FAILED:
+      throw StateError('C could not allocate memory for the summary.');
     default:
       throw StateError('Unexpected native summary status: $status.');
   }
