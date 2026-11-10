@@ -97,11 +97,15 @@ measurement_session_t *session_create(void) {
 }
 
 int session_add(measurement_session_t *session, const measurement_t *batch,
-                size_t count) {
+                size_t count, batch_accepted_callback_t on_accepted) {
   if (session == NULL) {
     return SUMMARY_INVALID;
   }
-  return accumulate(&session->accumulator, batch, count);
+  const int status = accumulate(&session->accumulator, batch, count);
+  if (status == SUMMARY_OK && on_accepted != NULL) {
+    on_accepted(count, session->accumulator.count);
+  }
+  return status;
 }
 
 int session_summary(const measurement_session_t *session, summary_t *out) {

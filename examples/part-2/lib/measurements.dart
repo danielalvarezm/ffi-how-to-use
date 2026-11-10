@@ -97,19 +97,63 @@ final class MeasurementSession {
 
   final MeasurementBindings _bindings;
   Pointer<NativeMeasurementSession> _handle;
+  bool _addingBatch = false;
 
   Pointer<NativeMeasurementSession> get _openHandle {
+    _checkNotAddingBatch();
     if (_handle == nullptr) {
       throw StateError('The measurement session is closed.');
     }
     return _handle;
   }
 
-  void addBatch(List<Measurement> batch) {
+  /// Notifies Dart on the same thread before returning for an accepted batch.
+  ///
+  /// If the callback throws, the batch still counts and the error is rethrown
+  /// after C returns. The callback must not use or close this session.
+  void addBatch(
+    List<Measurement> batch, {
+    void Function(int batchCount, int totalCount)? onBatchAccepted,
+  }) {
     final handle = _openHandle;
-    _withNativeBatch(batch, (native, count, _) {
-      _checkStatus(_bindings.session_add(handle, native, count));
-    });
+    _addingBatch = true;
+    try {
+      _withNativeBatch(batch, (native, count, _) {
+        (Object, StackTrace)? callbackError;
+        NativeCallable<Void Function(Size, Size)>? callback;
+        if (onBatchAccepted != null) {
+          void notify(int batchCount, int totalCount) {
+            try {
+              onBatchAccepted(batchCount, totalCount);
+            } catch (error, stackTrace) {
+              // Do not let an exception cross the C boundary.
+              callbackError = (error, stackTrace);
+            }
+          }
+
+          callback = NativeCallable<Void Function(Size, Size)>.isolateLocal(
+            notify,
+          );
+        }
+        try {
+          _checkStatus(
+            _bindings.session_add(
+              handle,
+              native,
+              count,
+              callback?.nativeFunction ?? nullptr,
+            ),
+          );
+        } finally {
+          callback?.close();
+        }
+        if (callbackError case (final error, final stackTrace)) {
+          Error.throwWithStackTrace(error, stackTrace);
+        }
+      });
+    } finally {
+      _addingBatch = false;
+    }
   }
 
   MeasurementSummary snapshot() {
@@ -126,9 +170,16 @@ final class MeasurementSession {
   }
 
   void close() {
+    _checkNotAddingBatch();
     if (_handle != nullptr) {
       _bindings.session_free(_handle);
       _handle = nullptr;
+    }
+  }
+
+  void _checkNotAddingBatch() {
+    if (_addingBatch) {
+      throw StateError('Cannot use the same session during addBatch.');
     }
   }
 }

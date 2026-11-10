@@ -39,8 +39,14 @@ class MeasurementBindings {
     ffi.Pointer<NativeMeasurementSession> session,
     ffi.Pointer<NativeMeasurement> batch,
     int count,
+    ffi.Pointer<
+      ffi.NativeFunction<
+        ffi.Void Function(ffi.Size batch_count, ffi.Size total_count)
+      >
+    >
+    on_accepted,
   ) {
-    return _session_add(session, batch, count);
+    return _session_add(session, batch, count, on_accepted);
   }
 
   late final _session_addPtr =
@@ -50,6 +56,11 @@ class MeasurementBindings {
             ffi.Pointer<NativeMeasurementSession>,
             ffi.Pointer<NativeMeasurement>,
             ffi.Size,
+            ffi.Pointer<
+              ffi.NativeFunction<
+                ffi.Void Function(ffi.Size batch_count, ffi.Size total_count)
+              >
+            >,
           )
         >
       >('session_add');
@@ -59,6 +70,11 @@ class MeasurementBindings {
           ffi.Pointer<NativeMeasurementSession>,
           ffi.Pointer<NativeMeasurement>,
           int,
+          ffi.Pointer<
+            ffi.NativeFunction<
+              ffi.Void Function(ffi.Size batch_count, ffi.Size total_count)
+            >
+          >,
         )
       >();
 

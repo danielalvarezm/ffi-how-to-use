@@ -130,4 +130,59 @@ void main() {
     expect(() => session.addBatch(const []), throwsStateError);
     expect(session.snapshot, throwsStateError);
   });
+
+  test('notifies synchronously and in order for accepted batches only', () {
+    final session = measurements.openSession();
+    addTearDown(session.close);
+    final events = <String>[];
+    void onBatchAccepted(int count, int total) => events.add('$count/$total');
+
+    session.addBatch(const [
+      Measurement('Outdoor temperature', 20.0),
+    ], onBatchAccepted: onBatchAccepted);
+    events.add('first call returned');
+    expect(
+      () => session.addBatch(const [], onBatchAccepted: onBatchAccepted),
+      throwsArgumentError,
+    );
+    session.addBatch(const [
+      Measurement('Café temperature', 24.0),
+    ], onBatchAccepted: onBatchAccepted);
+    events.add('second call returned');
+
+    expect(events, [
+      '1/1',
+      'first call returned',
+      '1/2',
+      'second call returned',
+    ]);
+    expect(session.snapshot().count, 2);
+  });
+
+  test('rejects reentry and closing the same session from the callback', () {
+    final session = measurements.openSession();
+    addTearDown(session.close);
+    session.addBatch(
+      const [Measurement('Outdoor temperature', 20.0)],
+      onBatchAccepted: (_, _) {
+        expect(() => session.addBatch(const []), throwsStateError);
+        expect(session.snapshot, throwsStateError);
+        expect(session.close, throwsStateError);
+      },
+    );
+    expect(session.snapshot().count, 1);
+  });
+
+  test('rethrows callback errors in Dart without rolling back the batch', () {
+    final session = measurements.openSession();
+    addTearDown(session.close);
+    final failure = StateError('Callback failed.');
+    expect(
+      () => session.addBatch(const [
+        Measurement('Outdoor temperature', 20.0),
+      ], onBatchAccepted: (_, _) => throw failure),
+      throwsA(same(failure)),
+    );
+    expect(session.snapshot().count, 1);
+  });
 }

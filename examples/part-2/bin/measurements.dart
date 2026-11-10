@@ -14,12 +14,16 @@ Future<void> main() async {
 
   final session = measurements.openSession();
   try {
-    session.addBatch(const [outdoor]);
-    session.addBatch(const [cafe]);
+    session.addBatch(const [outdoor], onBatchAccepted: _printBatchAccepted);
+    session.addBatch(const [cafe], onBatchAccepted: _printBatchAccepted);
     print('Session summary: ${_formatSummary(session.snapshot())}');
   } finally {
     session.close();
   }
+}
+
+void _printBatchAccepted(int batchCount, int totalCount) {
+  print('Batch accepted: count=$batchCount, total=$totalCount');
 }
 
 String _formatSummary(MeasurementSummary summary) =>
