@@ -11,6 +11,15 @@ Future<void> main() async {
     'Summary (Dart memory): ${_formatSummary(measurements.summarizeInto(batch))}',
   );
   print('Summary (C memory): ${_formatSummary(measurements.summarize(batch))}');
+
+  final session = measurements.openSession();
+  try {
+    session.addBatch(const [outdoor]);
+    session.addBatch(const [cafe]);
+    print('Session summary: ${_formatSummary(session.snapshot())}');
+  } finally {
+    session.close();
+  }
 }
 
 String _formatSummary(MeasurementSummary summary) =>

@@ -35,6 +35,81 @@ class MeasurementBindings {
         ffi.Pointer<ffi.Char> Function(ffi.Pointer<NativeMeasurement>)
       >();
 
+  int session_add(
+    ffi.Pointer<NativeMeasurementSession> session,
+    ffi.Pointer<NativeMeasurement> batch,
+    int count,
+  ) {
+    return _session_add(session, batch, count);
+  }
+
+  late final _session_addPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Int Function(
+            ffi.Pointer<NativeMeasurementSession>,
+            ffi.Pointer<NativeMeasurement>,
+            ffi.Size,
+          )
+        >
+      >('session_add');
+  late final _session_add = _session_addPtr
+      .asFunction<
+        int Function(
+          ffi.Pointer<NativeMeasurementSession>,
+          ffi.Pointer<NativeMeasurement>,
+          int,
+        )
+      >();
+
+  ffi.Pointer<NativeMeasurementSession> session_create() {
+    return _session_create();
+  }
+
+  late final _session_createPtr =
+      _lookup<
+        ffi.NativeFunction<ffi.Pointer<NativeMeasurementSession> Function()>
+      >('session_create');
+  late final _session_create = _session_createPtr
+      .asFunction<ffi.Pointer<NativeMeasurementSession> Function()>();
+
+  void session_free(ffi.Pointer<NativeMeasurementSession> session) {
+    return _session_free(session);
+  }
+
+  late final _session_freePtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(ffi.Pointer<NativeMeasurementSession>)
+        >
+      >('session_free');
+  late final _session_free = _session_freePtr
+      .asFunction<void Function(ffi.Pointer<NativeMeasurementSession>)>();
+
+  int session_summary(
+    ffi.Pointer<NativeMeasurementSession> session,
+    ffi.Pointer<NativeSummary> out,
+  ) {
+    return _session_summary(session, out);
+  }
+
+  late final _session_summaryPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Int Function(
+            ffi.Pointer<NativeMeasurementSession>,
+            ffi.Pointer<NativeSummary>,
+          )
+        >
+      >('session_summary');
+  late final _session_summary = _session_summaryPtr
+      .asFunction<
+        int Function(
+          ffi.Pointer<NativeMeasurementSession>,
+          ffi.Pointer<NativeSummary>,
+        )
+      >();
+
   ffi.Pointer<NativeSummary> summarize(
     ffi.Pointer<NativeMeasurement> batch,
     int count,
@@ -115,6 +190,8 @@ final class NativeMeasurement extends ffi.Struct {
     ..ref.label = label
     ..ref.value = value;
 }
+
+final class NativeMeasurementSession extends ffi.Opaque {}
 
 final class NativeSummary extends ffi.Struct {
   @ffi.Size()

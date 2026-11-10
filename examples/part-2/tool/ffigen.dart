@@ -10,10 +10,15 @@ Future<void> main() async {
     'summarize_into',
     'summarize',
     'summary_free',
+    'session_create',
+    'session_add',
+    'session_summary',
+    'session_free',
   };
   const structs = {
     'measurement': 'NativeMeasurement',
     'summary': 'NativeSummary',
+    'measurement_session': 'NativeMeasurementSession',
   };
   const statuses = {
     'SUMMARY_OK',

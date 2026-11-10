@@ -20,6 +20,8 @@ typedef struct summary {
   double mean;
 } summary_t;
 
+typedef struct measurement_session measurement_session_t;
+
 /* Borrowed UTF-8 string, valid only as long as the input label is alive. */
 const char *measurement_label(const measurement_t *measurement);
 
@@ -29,5 +31,14 @@ int summarize_into(const measurement_t *batch, size_t count, summary_t *out);
 /* Status is required. The result is NULL on error, otherwise owned by C. */
 summary_t *summarize(const measurement_t *batch, size_t count, int *status);
 void summary_free(summary_t *summary);
+
+/* C owns the handle until session_free. Creation returns NULL on failure. */
+measurement_session_t *session_create(void);
+/* Keep only aggregate values. On error, leave the session unchanged. */
+int session_add(measurement_session_t *session, const measurement_t *batch,
+                size_t count);
+/* Write to caller-owned memory. Return SUMMARY_EMPTY before the first batch. */
+int session_summary(const measurement_session_t *session, summary_t *out);
+void session_free(measurement_session_t *session);
 
 #endif

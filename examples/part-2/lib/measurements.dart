@@ -82,6 +82,55 @@ final class Measurements {
       }
     });
   }
+
+  MeasurementSession openSession() {
+    final handle = _bindings.session_create();
+    if (handle == nullptr) {
+      throw StateError('C could not allocate a measurement session.');
+    }
+    return MeasurementSession._(_bindings, handle);
+  }
+}
+
+final class MeasurementSession {
+  MeasurementSession._(this._bindings, this._handle);
+
+  final MeasurementBindings _bindings;
+  Pointer<NativeMeasurementSession> _handle;
+
+  Pointer<NativeMeasurementSession> get _openHandle {
+    if (_handle == nullptr) {
+      throw StateError('The measurement session is closed.');
+    }
+    return _handle;
+  }
+
+  void addBatch(List<Measurement> batch) {
+    final handle = _openHandle;
+    _withNativeBatch(batch, (native, count, _) {
+      _checkStatus(_bindings.session_add(handle, native, count));
+    });
+  }
+
+  MeasurementSummary snapshot() {
+    final handle = _openHandle;
+    return using((arena) {
+      final output = arena<NativeSummary>();
+      final status = _bindings.session_summary(handle, output);
+      if (status == SUMMARY_EMPTY) {
+        throw StateError('The session has no accepted measurements.');
+      }
+      _checkStatus(status);
+      return _copySummary(output);
+    });
+  }
+
+  void close() {
+    if (_handle != nullptr) {
+      _bindings.session_free(_handle);
+      _handle = nullptr;
+    }
+  }
 }
 
 T _withNativeBatch<T>(
@@ -117,7 +166,7 @@ void _checkStatus(int status) {
     case SUMMARY_EMPTY:
       throw ArgumentError('A measurement batch cannot be empty.');
     case SUMMARY_INVALID:
-      throw ArgumentError('Measurements and their sum must be finite.');
+      throw ArgumentError('Invalid measurement batch or non-finite total.');
     case SUMMARY_ALLOCATION_FAILED:
       throw StateError('C could not allocate memory for the summary.');
     default:

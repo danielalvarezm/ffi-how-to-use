@@ -91,4 +91,43 @@ void main() {
       throwsArgumentError,
     );
   });
+
+  test('accumulates two batches in an opaque session', () {
+    final session = measurements.openSession();
+    addTearDown(session.close);
+    const first = Measurement('Outdoor temperature', 20.0);
+    const second = Measurement('Café temperature', 24.0);
+    expect(session.snapshot, throwsStateError);
+    session.addBatch(const [first]);
+    expect(session.snapshot().count, 1);
+    session.addBatch(const [second]);
+    expect(
+      session.snapshot(),
+      measurements.summarizeInto(const [first, second]),
+    );
+  });
+
+  test('does not change the session when a batch is rejected', () {
+    final session = measurements.openSession();
+    addTearDown(session.close);
+    session.addBatch(const [Measurement('Outdoor temperature', 20.0)]);
+    final before = session.snapshot();
+    expect(() => session.addBatch(const []), throwsArgumentError);
+    expect(
+      () => session.addBatch(const [
+        Measurement('Would change the total', 24.0),
+        Measurement('Invalid', double.infinity),
+      ]),
+      throwsArgumentError,
+    );
+    expect(session.snapshot(), before);
+  });
+
+  test('rejects use after close and allows closing twice', () {
+    final session = measurements.openSession();
+    session.close();
+    expect(session.close, returnsNormally);
+    expect(() => session.addBatch(const []), throwsStateError);
+    expect(session.snapshot, throwsStateError);
+  });
 }
