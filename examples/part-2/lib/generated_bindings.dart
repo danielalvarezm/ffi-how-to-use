@@ -34,6 +34,33 @@ class MeasurementBindings {
       .asFunction<
         ffi.Pointer<ffi.Char> Function(ffi.Pointer<NativeMeasurement>)
       >();
+
+  int summarize_into(
+    ffi.Pointer<NativeMeasurement> batch,
+    int count,
+    ffi.Pointer<NativeSummary> out,
+  ) {
+    return _summarize_into(batch, count, out);
+  }
+
+  late final _summarize_intoPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Int Function(
+            ffi.Pointer<NativeMeasurement>,
+            ffi.Size,
+            ffi.Pointer<NativeSummary>,
+          )
+        >
+      >('summarize_into');
+  late final _summarize_into = _summarize_intoPtr
+      .asFunction<
+        int Function(
+          ffi.Pointer<NativeMeasurement>,
+          int,
+          ffi.Pointer<NativeSummary>,
+        )
+      >();
 }
 
 final class NativeMeasurement extends ffi.Struct {
@@ -50,3 +77,35 @@ final class NativeMeasurement extends ffi.Struct {
     ..ref.label = label
     ..ref.value = value;
 }
+
+final class NativeSummary extends ffi.Struct {
+  @ffi.Size()
+  external int count;
+
+  @ffi.Double()
+  external double minimum;
+
+  @ffi.Double()
+  external double maximum;
+
+  @ffi.Double()
+  external double mean;
+
+  static ffi.Pointer<NativeSummary> $allocate(
+    ffi.Allocator $allocator, {
+    required int count,
+    required double minimum,
+    required double maximum,
+    required double mean,
+  }) => $allocator<NativeSummary>()
+    ..ref.count = count
+    ..ref.minimum = minimum
+    ..ref.maximum = maximum
+    ..ref.mean = mean;
+}
+
+const int SUMMARY_EMPTY = 1;
+
+const int SUMMARY_INVALID = 2;
+
+const int SUMMARY_OK = 0;

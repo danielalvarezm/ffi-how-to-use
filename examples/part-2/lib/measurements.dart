@@ -13,6 +13,13 @@ final class Measurement {
   final double value;
 }
 
+typedef MeasurementSummary = ({
+  int count,
+  double minimum,
+  double maximum,
+  double mean,
+});
+
 final class Measurements {
   Measurements(this._bindings);
 
@@ -48,6 +55,53 @@ final class Measurements {
       final borrowed = _bindings.measurement_label(native);
       return borrowed.cast<Utf8>().toDartString();
     });
+  }
+
+  MeasurementSummary summarizeInto(List<Measurement> batch) {
+    return _withNativeBatch(batch, (native, count, arena) {
+      final output = arena<NativeSummary>();
+      _checkStatus(_bindings.summarize_into(native, count, output));
+      return _copySummary(output);
+    });
+  }
+}
+
+T _withNativeBatch<T>(
+  List<Measurement> batch,
+  T Function(Pointer<NativeMeasurement>, int, Arena) call,
+) {
+  return using((arena) {
+    final count = batch.length;
+    final Pointer<NativeMeasurement> native = count == 0
+        ? nullptr
+        : arena<NativeMeasurement>(count);
+    for (var i = 0; i < count; i++) {
+      _writeMeasurement(native + i, batch[i], arena);
+    }
+    return call(native, count, arena);
+  });
+}
+
+MeasurementSummary _copySummary(Pointer<NativeSummary> pointer) {
+  final result = pointer.ref;
+  return (
+    count: result.count,
+    minimum: result.minimum,
+    maximum: result.maximum,
+    mean: result.mean,
+  );
+}
+
+void _checkStatus(int status) {
+  switch (status) {
+    case SUMMARY_OK:
+      return;
+    case SUMMARY_EMPTY:
+      throw ArgumentError('A measurement batch cannot be empty.');
+    case SUMMARY_INVALID:
+      throw ArgumentError('Measurements and their sum must be finite.');
+    default:
+      throw StateError('Unexpected native summary status: $status.');
   }
 }
 
