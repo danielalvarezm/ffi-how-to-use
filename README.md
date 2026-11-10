@@ -8,6 +8,8 @@ This project is a practical example of how to use **FFI** in **Dart** to work wi
 
 To compare both approaches, we'll use a small **C** library with addition and multiplication.
 
+Continue with [Part 2: passing measurements between Dart and C](examples/part-2/#introduction).
+
 ## Setup and run
 
 For this project, we'll need the following tools:
@@ -97,6 +99,8 @@ con una biblioteca nativa. Aprenderemos a cómo escribir los bindings a mano, y 
 generarlos también con **FFIGen**.
 
 Para comparar ambos enfoques, usaremos un ejemplo de una pequeña biblioteca de **C**, con operaciones de suma y multiplicación.
+
+Continúa con la [parte 2: pasar mediciones entre Dart y C](examples/part-2/#español).
 
 ### Configuración y ejecución
 
